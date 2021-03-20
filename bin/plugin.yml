@@ -1,0 +1,9 @@
+name: UHCUtils
+version: 1.0
+author: piratecody
+main: com.piratecody.uhcutils.UHCUtils
+api-version: 1.16
+commands:
+    distributeplayers:
+        description: Teleports all players to a random location around the map
+        usage: /<command> <xMax> <zMax>
