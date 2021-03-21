@@ -6,4 +6,4 @@ api-version: 1.16
 commands:
     distributeplayers:
         description: Teleports all players to a random location around the map
-        usage: /<command> <xMax> <zMax>
+        usage: /<command> <xMax> <zMax> <minimum>

@@ -21,11 +21,12 @@ public class DistributePlayers implements CommandExecutor{
 		Player[] players = Bukkit.getServer().getOnlinePlayers().toArray(new Player[0]);
 		
 		// parse arguments
-		int xMax = 0, zMax = 0;
+		int xMax = 0, zMax = 0, minimumDistanceBetweenSpawns = 0;
 		
 		try {
 			xMax = Integer.parseInt(args[0]);
 			zMax = Integer.parseInt(args[1]);
+			minimumDistanceBetweenSpawns = Integer.parseInt(args[2]);
 		} catch(Exception e) {
 			sender.sendMessage(ChatColor.RED + "Invalid arguments for distributeplayers!");
 			e.printStackTrace(System.err);
@@ -33,11 +34,24 @@ public class DistributePlayers implements CommandExecutor{
 		}
 		
 		// generate random locations to teleport players
-		// must be within arguments, and must be at the surface (a way to use height map?)
+		// must be within arguments, and must be at the surface 
+		// minimum distance between spawns (done?)
+		// note: didnt crash, will assume working unless proven otherwise
 		ArrayList<Location> locations = new ArrayList<Location>();
 		for(int i = 0; i < players.length; ++i) {
 			
-			locations.add(generateRandomSurfaceLocation(players[i].getPlayer().getWorld(), xMax, zMax));
+			Location loc = generateRandomSurfaceLocation(players[i].getWorld(), xMax, zMax);
+			
+			if(locations.isEmpty()) {
+				locations.add(loc);
+			} else {
+				while(!compliesWithMinDistance(loc, locations, minimumDistanceBetweenSpawns)) {
+					loc = generateRandomSurfaceLocation(players[i].getWorld(), xMax, zMax);
+				}
+				locations.add(loc);
+			}
+			
+			//locations.add(generateRandomSurfaceLocation(players[i].getPlayer().getWorld(), xMax, zMax));
 			
 		}
 		
@@ -84,4 +98,17 @@ public class DistributePlayers implements CommandExecutor{
 		
 	}
 
+	public boolean compliesWithMinDistance(Location loc, ArrayList<Location> locations, int minDistance) {
+		
+		boolean compliesWithMinDist = true;
+		for(Location l : locations) {
+			if(loc.distance(l) < minDistance) {
+				compliesWithMinDist = false;
+				break;
+			}
+		}
+		
+		return compliesWithMinDist;
+		
+	}
 }
